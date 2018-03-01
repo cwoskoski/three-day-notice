@@ -1,3 +1,41 @@
 <?php $this->headTitle('3 Day Upload'); ?>
+<?php
 
-<h1>3 day upload</h1>
+$uploadScript = <<<EOD
+    $(function () {
+        $('#fileupload').fileupload({
+            dropZone: $('#dropzone'),
+            dataType: 'json',
+            drop: function (e, data) {
+                $.each(data.files, function (index, file) {
+                    console.log('Dropped file: ' + file.name);
+                });
+            },
+            add: function (e, data) {
+                data.submit();
+            },
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    $('<p/>').text(file.name).appendTo(document.body);
+                });
+            }
+        });
+    });
+
+    $(document).bind('drop dragover', function (e) {
+        e.preventDefault();
+    });
+EOD;
+
+$this->inlineScript()
+    ->appendScript($uploadScript);
+
+?>
+
+<div class="jumbotron" id="dropzone">
+    <h1>3 Day Notice Upload</h1>
+    <p>
+    Drag & Drop your list of residents who should receive a 3-day notice here
+    </p>
+    <input id="fileupload" type="file" name="files[]" data-url="server/php/" multiple>
+</div>
