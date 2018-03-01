@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  3-day-php-fpm:
+    image: prooph/php:7.2-fpm-xdebug
+    hostname: php
+    volumes:
+      - .:/var/www
+    networks:
+      backend:
+          aliases:
+            - php
+    environment:
+      - PROOPH_ENV=development
+
+  3-day-nginx:
+    image: prooph/nginx:www
+    volumes:
+      - .:/var/www
+    ports:
+      - 80:80
+    links:
+      - 3-day-php-fpm:php
+    networks:
+      - backend
+      - frontend
+
+
+networks:
+  frontend:
+    external:
+      name: "intranet-frontend"
+  backend:
+    external:
+      name: "intranet-backend"
